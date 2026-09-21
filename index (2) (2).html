@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0,
+      maximum-scale=1.0,user-scalable=no">
+
+<title>NARUTO7</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+    margin:0;
+    width:100%;
+    min-height:100%;
+    background:#030711;
+    color:white;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    overflow-x:hidden;
+}
+
+#network{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+    pointer-events:none;
+}
+
+.app{
+    position:relative;
+    z-index:1;
+    width:100%;
+    max-width:600px;
+    margin:auto;
+    padding:16px;
+    padding-bottom:35px;
+}
+
+.header{
+    text-align:center;
+    padding:12px 0 18px;
+}
+
+.logo{
+    font-size:30px;
+    font-weight:900;
+    letter-spacing:2px;
+}
+
+.status{
+    display:inline-block;
+    margin-top:8px;
+    padding:6px 13px;
+    border-radius:20px;
+    background:rgba(35,114,237,.15);
+    border:1px solid rgba(57,135,255,.35);
+    color:#55a2ff;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.fps{
+    margin-top:10px;
+    color:#fff;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.tabs{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    margin-bottom:15px;
+}
+
+.tab{
+    border:1px solid rgba(57,135,255,.2);
+    background:#0c1528;
+    color:#8190a9;
+    padding:12px 5px;
+    border-radius:10px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.tab.active{
+    color:white;
+    background:#1764d0;
+    border-color:#3987ff;
+}
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
+}
+
+.card{
+    background:rgba(13,24,45,.94);
+    border:1px solid rgba(57,135,255,.18);
+    border-radius:15px;
+    padding:15px;
+    margin-bottom:12px;
+    box-shadow:0 8px 30px rgba(0,0,0,.25);
+}
+
+.card h2{
+    margin:0 0 5px;
+    font-size:17px;
+}
+
+.subtitle{
+    color:#8190a9;
+    font-size:12px;
+    margin-bottom:12px;
+}
+
+.option{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:13px 0;
+    border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.option:last-child{
+    border-bottom:0;
+}
+
+.option-text{
+    flex:1;
+}
+
+.option-title{
+    font-size:14px;
+    font-weight:bold;
+}
+
+.option-desc{
+    margin-top:4px;
+    color:#8190a9;
+    font-size:11px;
+    line-height:1.4;
+}
+
+.switch{
+    width:48px;
+    height:27px;
+    border-radius:30px;
+    background:#263249;
+    border:1px solid #39465d;
+    position:relative;
+    flex:none;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.switch::after{
+    content:"";
+    width:21px;
+    height:21px;
+    border-radius:50%;
+    background:#8996aa;
+    position:absolute;
+    left:2px;
+    top:2px;
+    transition:.2s;
+}
+
+.switch.on{
+    background:#1764d0;
+    border-color:#3987ff;
+}
+
+.switch.on::after{
+    left:23px;
+    background:white;
+}
+
+button.action{
+    width:100%;
+    border:0;
+    border-radius:11px;
+    padding:13px;
+    margin-top:10px;
+    background:#1764d0;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button.action:active{
+    transform:scale(.98);
+}
+
+.info-row{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    padding:11px 0;
+    border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.info-row:last-child{
+    border:0;
+}
+
+.info-label{
+    color:#8190a9;
+}
+
+.info-value{
+    text-align:right;
+    font-weight:bold;
+    max-width:60%;
+    word-break:break-word;
+}
+
+.footer{
+    text-align:center;
+    color:#59677e;
+    font-size:11px;
+    padding:15px 0;
+}
+
+.notice{
+    padding:11px;
+    border-radius:10px;
+    background:rgba(57,135,255,.08);
+    border:1px solid rgba(57,135,255,.16);
+    color:#9fb1cb;
+    font-size:11px;
+    line-height:1.5;
+    margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="network"></canvas>
+
+<div class="app">
+
+<header class="header">==
+    <div class="logo">NARUTO7</div>
+    <div class="status">● SISTEMA ONLINE</div>
+    <div class="fps">120 FPS MODE</div>
+</header>
+
+<div class="tabs">
+    <button class="tab active" data-page="fps">FPS</button>
+    <button class="tab" data-page="mira">MIRA</button>
+    <button class="tab" data-page="info">INFO</button>
+</div>
+
+<!-- FPS -->
+<section id="fps" class="page active">
+
+<div class="card">
+<h2>Otimizações</h2>
+<div class="subtitle">
+Otimizações que podem ser executadas pelo navegador.
+</div>
+
+<div class="option">
+<div class="option-text">
+<div class="option-title">Modo Desempenho</div>
+<div class="option-desc">
+Reduz elementos visuais da própria aplicação.
+</div>
+</div>
+<div class="switch" data-action="performance"></div>
+</div>
+
+<div class="option">
+<div class="option-text">
+<div class="option-title">Redução de Animações</div>
+<div class="option-desc">
+Desativa as animações do painel para reduzir processamento.
+</div>
+</div>
+<div class="switch" data-action="animations"></div>
+</div>
+
+<div class="option">
+<div class="option-text">
+<div class="option-title">Wake Lock</div>
+<div class="option-desc">
+Mantém a tela ativa quando o navegador oferece suporte.
+</div>
+</div>
+<div class="switch" data-action="wakelock"></div>
+</div>
+
+<div class="option">
+<div class="option-text">
+<div class="option-title">Tela Cheia</div>
+<div class="option-desc">
+Coloca o painel em modo de tela cheia quando permitido.
+</div>
+</div>
+<div class="switch" data-action="fullscreen"></div>
+</div>
+
+<div class="option">
+<div class="option-text">
+<div class="option-title">Otimização Visual</div>
+<div class="option-desc">
+Remove o fundo animado para reduzir o trabalho gráfico.
+</div>
+</div>
+<div class="switch" data-action="visual"></div>
+</div>
+
+<div class="option">
+<div class="option-text">
+<div class="option-title">Bloquear Suspensão</div>
+<div class="option-desc">
+Tenta manter a página ativa durante o uso.
+</div>
+</div>
+<div class="switch" data-action="nosleep"></div>
+</div>
+
+</div>
+
+<div class="card">
+<h2>FREE FIRE</h2>
+
+<button class="action" onclick="openFreeFire()">
+ABRIR FREE FIRE
+</button>
+
+<div class="notice">
+O botão tenta abrir o aplicativo através do esquema de URL
+suportado pelo dispositivo. Se o sistema não permitir, nada
+será alterado no jogo.
+</div>
+</div>
+
+</section>
+
+<!-- MIRA -->
+<section id="mira" class="page">
+
+<div class="card">
+<h2>Configuração</h2>
+<div class="subtitle">
+Controles locais do painel.
+</div>
+
+<div class="option">
+<div class="option-text">
+<div class="option-title">Otimizar Touch</div>
+<div class="option-desc">
+Melhora a resposta dos controles desta página.
+</div>
+</div>
+<div class="switch" data-action="touch"></div>
+</div>
+
+<div class="option">
+<div class="option-text">
+<div class="option-title">Baixa Latência Visual</div>
+<div class="option-desc">
+Reduz efeitos visuais desnecessários.
+</div>
+</div>
+<div class="switch" data-action="latency"></div>
+</div>
+
+<div class="option">
+<div class="option-text">
+<div class="option-title">Interface Simplificada</div>
+<div class="option-desc">
+Remove efeitos para uma interface mais leve.
+</div>
+</div>
+<div class="switch" data-action="simple"></div>
+</div>
+
+</div>
+
+<div class="card">
+<h2>Estado</h2>
+
+<div class="info-row">
+<span class="info-label">Sistema</span>
+<span class="info-value" id="stateSystem">Pronto</span>
+</div>
+
+<div class="info-row">
+<span class="info-label">Wake Lock</span>
+<span class="info-value" id="stateWake">Indisponível</span>
+</div>
+
+<div class="info-row">
+<span class="info-label">Tela cheia</span>
+<span class="info-value" id="stateFull">Desligada</span>
+</div>
+
+</div>
+
+</section>
+
+<!-- INFO -->
+<section id="info" class="page">
+
+<div class="card">
+<h2>NARUTO7</h2>
+
+<div class="info-row">
+<span class="info-label">Código</span>
+<span class="info-value">king_naruto67</span>
+</div>
+
+<div class="info-row">
+<span class="info-label">Dispositivo</span>
+<span class="info-value" id="device">Detectando...</span>
+</div>
+
+<div class="info-row">
+<span class="info-label">Sistema</span>
+<span class="info-value" id="os">Detectando...</span>
+</div>
+
+<div class="info-row">
+<span class="info-label">Navegador</span>
+<span class="info-value" id="browser">Detectando...</span>
+</div>
+
+<div class="info-row">
+<span class="info-label">Tela</span>
+<span class="info-value" id="screenInfo">Detectando...</span>
+</div>
+
+<div class="info-row">
+<span class="info-label">Online</span>
+<span class="info-value" id="online">Verificando...</span>
+</div>
+
+</div>
+
+<div class="card">
+<h2>Controles</h2>
+
+<button class="action" onclick="resetSettings()">
+RESETAR CONFIGURAÇÕES
+</button>
+
+</div>
+
+</section>
+
+<div class="footer">
+NARUTO7 • king_naruto67
+</div>
+
+</div>
+
+<script>
+
+/* =========================
+   ABAS
+========================= */
+
+document.querySelectorAll(".tab").forEach(tab => {
+
+    tab.addEventListener("click", () => {
+
+        document.querySelectorAll(".tab")
+            .forEach(x => x.classList.remove("active"));
+
+        document.querySelectorAll(".page")
+            .forEach(x => x.classList.remove("active"));
+
+        tab.classList.add("active");
+
+        document.getElementById(
+            tab.dataset.page
+        ).classList.add("active");
+    });
+
+});
+
+
+/* =========================
+   CONFIGURAÇÕES
+========================= */
+
+const switches =
+document.querySelectorAll(".switch");
+
+let wakeLock = null;
+
+function saveState(action, state){
+    localStorage.setItem(
+        "wickrqz_" + action,
+        state ? "1" : "0"
+    );
+}
+
+function loadStates(){
+
+    switches.forEach(sw => {
+
+        const action = sw.dataset.action;
+        const saved =
+            localStorage.getItem("wickrqz_" + action);
+
+        if(saved === "1"){
+            sw.classList.add("on");
+        }
+
+    });
+
+}
+
+loadStates();
+
+
+/* =========================
+   SWITCHES
+========================= */
+
+switches.forEach(sw => {
+
+    sw.addEventListener("click", async () => {
+
+        const action = sw.dataset.action;
+
+        sw.classList.toggle("on");
+
+        const enabled =
+            sw.classList.contains("on");
+
+        saveState(action, enabled);
+
+        await executeAction(action, enabled);
+
+    });
+
+});
+
+
+/* =========================
+   AÇÕES
+========================= */
+
+async function executeAction(action, enabled){
+
+    if(action === "performance"){
+        document.body.style.textRendering =
+            enabled ? "optimizeSpeed" : "auto";
+    }
+
+    if(action === "animations"){
+        document.body.classList.toggle(
+            "noAnimations",
+            enabled
+        );
+
+        if(enabled){
+            enableNoAnimations();
+        }else{
+            disableNoAnimations();
+        }
+    }
+
+    if(action === "wakelock"){
+        if(enabled){
+            await requestWakeLock();
+        }else{
+            releaseWakeLock();
+        }
+    }
+
+    if(action === "fullscreen"){
+
+        if(enabled){
+            enterFullscreen();
+        }else{
+            exitFullscreen();
+        }
+    }
+
+    if(action === "visual"){
+
+        document.getElementById("network")
+            .style.display = enabled
+            ? "none"
+            : "block";
+    }
+
+    if(action === "nosleep"){
+        document.body.style.userSelect =
+            enabled ? "none" : "auto";
+    }
+
+    if(action === "touch"){
+        document.documentElement.style
+            .touchAction =
+            enabled ? "manipulation" : "auto";
+    }
+
+    if(action === "latency"){
+        document.body.style
+            .scrollBehavior =
+            enabled ? "auto" : "smooth";
+    }
+
+    if(action === "simple"){
+
+        if(enabled){
+            enableNoAnimations();
+        }else{
+            disableNoAnimations();
+        }
+    }
+
+}
+
+
+/* =========================
+   ANIMAÇÕES
+========================= */
+
+function enableNoAnimations(){
+
+    if(document.getElementById("noAnimationStyle"))
+        return;
+
+    const style =
+        document.createElement("style");
+
+    style.id = "noAnimationStyle";
+
+    style.textContent = `
+        *, *::before, *::after {
+            animation: none !important;
+            transition: none !important;
+            scroll-behavior: auto !important;
+        }
+    `;
+
+    document.head.appendChild(style);
+}
+
+function disableNoAnimations(){
+
+    const style =
+        document.getElementById("noAnimationStyle");
+
+    if(style)
+        style.remove();
+}
+
+
+/* =========================
+   WAKE LOCK
+========================= */
+
+async function requestWakeLock(){
+
+    if(!("wakeLock" in navigator)){
+
+        document.getElementById("stateWake")
+            .textContent = "Não suportado";
+
+        return;
+    }
+
+    try{
+
+        wakeLock =
+            await navigator.wakeLock.request("screen");
+
+        document.getElementById("stateWake")
+            .textContent = "Ativo";
+
+        wakeLock.addEventListener(
+            "release",
+            () => {
+                document.getElementById("stateWake")
+                    .textContent = "Liberado";
+            }
+        );
+
+    }catch(error){
+
+        document.getElementById("stateWake")
+            .textContent = "Bloqueado";
+    }
+}
+
+function releaseWakeLock(){
+
+    if(wakeLock){
+
+        wakeLock.release();
+
+        wakeLock = null;
+    }
+
+    document.getElementById("stateWake")
+        .textContent = "Desligado";
+}
+
+
+/* =========================
+   TELA CHEIA
+========================= */
+
+async function enterFullscreen(){
+
+    try{
+
+        if(document.documentElement.requestFullscreen){
+
+            await document.documentElement
+                .requestFullscreen();
+
+            document.getElementById("stateFull")
+                .textContent = "Ativa";
+        }
+
+    }catch(e){
+
+        document.getElementById("stateFull")
+            .textContent = "Bloqueada";
+    }
+}
+
+async function exitFullscreen(){
+
+    try{
+
+        if(document.fullscreenElement){
+
+            await document.exitFullscreen();
+        }
+
+    }catch(e){}
+
+    document.getElementById("stateFull")
+        .textContent = "Desligada";
+}
+
+
+/* =========================
+   FREE FIRE
+========================= */
+
+function openFreeFire(){
+
+    const urls = [
+        "freefire://",
+        "freefireth://",
+        "freefiremax://"
+    ];
+
+    let index = 0;
+
+    function attempt(){
+
+        if(index >= urls.length){
+
+            alert(
+                "WICK RQZ\n\n" +
+                "O sistema não permitiu abrir o Free Fire."
+            );
+
+            return;
+        }
+
+        window.location.href = urls[index];
+
+        index++;
+    }
+
+    attempt();
+}
+
+
+/* =========================
+   INFORMAÇÕES DO DISPOSITIVO
+========================= */
+
+function detectDevice(){
+
+    const ua =
+        navigator.userAgent.toLowerCase();
+
+    let device = "Dispositivo móvel";
+
+    if(ua.includes("iphone"))
+        device = "iPhone";
+
+    else if(ua.includes("ipad"))
+        device = "iPad";
+
+    else if(ua.includes("android"))
+        device = "Android";
+
+    document.getElementById("device")
+        .textContent = device;
+
+
+    let os = "Desconhecido";
+
+    if(ua.includes("android"))
+        os = "Android";
+
+    else if(ua.includes("iphone") ||
+            ua.includes("ipad"))
+        os = "iOS";
+
+    document.getElementById("os")
+        .textContent = os;
+
+
+    let browser = "Navegador";
+
+    if(ua.includes("chrome"))
+        browser = "Chrome";
+
+    else if(ua.includes("safari"))
+        browser = "Safari";
+
+    else if(ua.includes("firefox"))
+        browser = "Firefox";
+
+    document.getElementById("browser")
+        .textContent = browser;
+
+
+    document.getElementById("screenInfo")
+        .textContent =
+        screen.width + " × " +
+        screen.height +
+        " • DPR " +
+        window.devicePixelRatio;
+
+
+    document.getElementById("online")
+        .textContent =
+        navigator.onLine
+        ? "Sim"
+        : "Não";
+
+
+    document.getElementById("stateWake")
+        .textContent =
+        ("wakeLock" in navigator)
+        ? "Disponível"
+        : "Indisponível";
+}
+
+detectDevice();
+
+
+/* =========================
+   RESET
+========================= */
+
+function resetSettings(){
+
+    Object.keys(localStorage)
+        .filter(key => key.startsWith("wickrqz_"))
+        .forEach(key => localStorage.removeItem(key));
+
+    switches.forEach(sw =>
+        sw.classList.remove("on")
+    );
+
+    document.getElementById("network")
+        .style.display = "block";
+
+    disableNoAnimations();
+
+    releaseWakeLock();
+
+    alert(
+        "WICK RQZ\n\n" +
+        "Configurações resetadas."
+    );
+}
+
+
+/* =========================
+   REDE DE PONTOS
+========================= */
+
+const canvas =
+    document.getElementById("network");
+
+const ctx =
+    canvas.getContext("2d");
+
+let points = [];
+
+function resizeCanvas(){
+
+    canvas.width =
+        window.innerWidth;
+
+    canvas.height =
+        window.innerHeight;
+
+    points = [];
+
+    const amount =
+        Math.min(
+            70,
+            Math.floor(
+                (canvas.width *
+                 canvas.height) / 15000
+            )
+        );
+
+    for(let i=0;i<amount;i++){
+
+        points.push({
+            x:Math.random()*canvas.width,
+            y:Math.random()*canvas.height,
+            vx:(Math.random()-.5)*.35,
+            vy:(Math.random()-.5)*.35
+        });
+    }
+}
+
+function animate(){
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    for(const p of points){
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if(p.x < 0 || p.x > canvas.width)
+            p.vx *= -1;
+
+        if(p.y < 0 || p.y > canvas.height)
+            p.vy *= -1;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            p.x,
+            p.y,
+            1.4,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fillStyle =
+            "rgba(57,135,255,.65)";
+
+        ctx.fill();
+    }
+
+    for(let i=0;i<points.length;i++){
+
+        for(let j=i+1;j<points.length;j++){
+
+            const a = points[i];
+            const b = points[j];
+
+            const dx = a.x-b.x;
+            const dy = a.y-b.y;
+
+            const distance =
+                Math.sqrt(dx*dx+dy*dy);
+
+            if(distance < 125){
+
+                ctx.beginPath();
+
+                ctx.moveTo(a.x,a.y);
+                ctx.lineTo(b.x,b.y);
+
+                ctx.strokeStyle =
+                    "rgba(57,135,255," +
+                    (.18 *
+                    (1-distance/125)) +
+                    ")";
+
+                ctx.stroke();
+            }
+        }
+    }
+
+    requestAnimationFrame(animate);
+}
+
+resizeCanvas();
+
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
+
+animate();
+
+
+/* =========================
+   VOLTAR WAKE LOCK
+========================= */
+
+document.addEventListener(
+    "visibilitychange",
+    async () => {
+
+        const sw =
+            document.querySelector(
+                '[data-action="wakelock"]'
+            );
+
+        if(
+            document.visibilityState === "visible" &&
+            sw &&
+            sw.classList.contains("on")
+        ){
+            await requestWakeLock();
+        }
+    }
+);
+
+</script>
+
+</body>
+</html>
